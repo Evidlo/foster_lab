@@ -1,0 +1,148 @@
+#!/bin/bash
+# Evan Widloski - 2018-08-14
+# Run bandpass, whiten and ms4 sort on exported .mda files for a single epoch
+
+# e.g. `foster_build run_20180609_1234_merge.rec`
+#   will generate output.exported/, output.filtered/, output.whitened/,
+#   and output.firings/
+
+# make globs expand to nothing when there are no matches
+shopt -s nullglob
+# quit if we get any errors
+set -e
+
+# ----- Config -----
+
+# directory containing exported .mda's
+MDA_OUTPUT_DIR=output.exported
+# directory containing filtered .mda's
+FILTERED_OUTPUT_DIR=output.filtered
+# directory containing whitened .mda's
+WHITENED_OUTPUT_DIR=output.whitened
+# directory containing firings .mda's
+FIRINGS_OUTPUT_DIR=output.firings
+
+
+function build(){
+    # ----- Checks -----
+
+    # check for python packages
+    python_packages=$(pip freeze)
+    # also check conda packages, if conda is installed
+    if hash conda
+    then
+        python_packages="$python_packages $(conda list)"
+    fi
+
+    if [[ $python_packages != *ml?ephys* || $python_packages != *ml?ms4alg* ]]
+    then
+        warning "Error: Can't find python package ml-ephys or ml-ms4alg.
+                Is mountainsort installed?"
+        exit 1
+    fi
+
+    # ----- Exporting -----
+
+    if [ ! -d $MDA_OUTPUT_DIR ]
+    then
+        # export .rec to .mda in OUTPUT_DIR
+        exportmda -rec $2 \
+                -outputdirectory $MDA_OUTPUT_DIR \
+                -abortbaddata 0
+    else
+        warning "Warning: $MDA_OUTPUT_DIR already exists"
+    fi
+
+    # ----- Filtering -----
+
+    if [ ! -d $FILTERED_OUTPUT_DIR ]
+    then
+        mkdir $FILTERED_OUTPUT_DIR
+        for f in $MDA_OUTPUT_DIR/*.mda
+        do
+            ml-run-process ephys.bandpass_filter \
+                        --inputs timeseries:$f \
+                        --outputs timeseries_out:$FILTERED_OUTPUT_DIR/$(basename $f) \
+                        --parameters samplerate:30000 freq_min:300 freq_max:6000
+        done
+    else
+        warning "Warning: $FILTERED_OUTPUT_DIR already exists"
+    fi
+
+    # ----- Whitening -----
+
+    if [ ! -d $WHITENED_OUTPUT_DIR ]
+    then
+        mkdir $WHITENED_OUTPUT_DIR
+        for f in $FILTERED_OUTPUT_DIR/*.mda
+        do
+            ml-run-process ephys.whiten \
+                        --inputs timeseries:$f \
+                        --outputs timeseries_out:$WHITENED_OUTPUT_DIR/$(basename $f)
+        done
+    else
+        warning "Warning: $WHITENED_OUTPUT_DIR already exists"
+    fi
+
+    # ----- Sorting -----
+
+    if [ ! -d $FIRINGS_OUTPUT_DIR ]
+    then
+        mkdir $FIRINGS_OUTPUT_DIR
+        for f in $WHITENED_OUTPUT_DIR/*.mda
+        do
+            ml-run-process ms4alg.sort \
+                        --inputs timeseries:$f \
+                        --outputs firings_out:$FIRINGS_OUTPUT_DIR/$(basename $f) \
+                        --parameters detect_sign:1 adjacency_radius:-1 detect_threshold:3
+        done
+    else
+        warning "Warning: $FIRINGS_OUTPUT_DIR already exists"
+    fi
+}
+
+
+function view(){
+    if [ -z $2 ]
+    then
+        warning "Error: path to firings.mda required"
+    fi
+    qt-mountainview --raw=$MDA_OUTPUT_DIR/$(basename $2) \
+                    --filt=$FILTERED_OUTPUT_DIR/$(basename $2) \
+                    --pre=$WHITENED_OUTPUT_DIR/$(basename $2) \
+                    --firings=$FIRINGS_OUTPUT_DIR/$(basename $2) \
+                    --samplerate=30000
+    exit 1
+}
+
+
+function warning(){
+    tput setaf 1
+    echo $1
+    tput setaf 7
+}
+
+
+function main(){
+    if [[ $1 == "-h" || $1 == "--help" ]]
+    then
+        echo "Usage: $(basename $0) build"
+        echo "  Generates .mda files in output.filtered/, output.whitened/, output.firings/ directories.  output.exported/ must exist already.  Delete each directory to rerun step."
+        echo "Usage: $(basename $0) build REC_FILE"
+        echo "  Same as previous step, but also generate output.exported/ directory."
+        echo "Usage: $(basename $0) view FIRINGS_MDA_FILE"
+        echo "  Runs qt-mountainview on files generated on build step"
+        exit 1
+
+    elif [[ $1 == "view" ]]
+    then
+        view "$@"
+
+    elif [[ $1 == "build" ]]
+    then
+        build "$@"
+    fi
+}
+
+
+main "$@"

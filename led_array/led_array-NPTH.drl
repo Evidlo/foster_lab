@@ -1,0 +1,11 @@
+M48
+;DRILL file {KiCad 6.0.0-rc1-unknown-r13375-f0c57176} date Thu Aug  9 00:23:12 2018
+;FORMAT={2:4/ absolute / inch / suppress leading zeros}
+FMAT,2
+INCH,TZ
+%
+G90
+G05
+M72
+T0
+M30
