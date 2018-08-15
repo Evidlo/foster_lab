@@ -2,10 +2,6 @@
 # Evan Widloski - 2018-08-14
 # Run bandpass, whiten and ms4 sort on exported .mda files for a single epoch
 
-# e.g. `foster_build run_20180609_1234_merge.rec`
-#   will generate output.exported/, output.filtered/, output.whitened/,
-#   and output.firings/
-
 # make globs expand to nothing when there are no matches
 shopt -s nullglob
 # quit if we get any errors
