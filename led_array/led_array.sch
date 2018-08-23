@@ -1,4 +1,5 @@
 EESchema Schematic File Version 4
+LIBS:led_array-cache
 EELAYER 26 0
 EELAYER END
 $Descr A4 11693 8268
@@ -25,18 +26,8 @@ Wire Wire Line
 	6300 4300 6500 4300
 Wire Wire Line
 	6500 4300 6500 4000
-Wire Wire Line
-	6300 4600 6500 4600
-Wire Wire Line
-	6500 4600 6500 4300
-Wire Wire Line
-	6300 4900 6500 4900
-Wire Wire Line
-	6500 4900 6500 4600
 Connection ~ 6500 3700
 Connection ~ 6500 4000
-Connection ~ 6500 4300
-Connection ~ 6500 4600
 Wire Wire Line
 	6300 5200 6500 5200
 Wire Wire Line
@@ -49,18 +40,8 @@ Wire Wire Line
 	6300 5800 6500 5800
 Wire Wire Line
 	6500 5800 6500 5500
-Wire Wire Line
-	6300 6100 6500 6100
-Wire Wire Line
-	6500 6100 6500 5800
-Wire Wire Line
-	6300 6400 6500 6400
-Wire Wire Line
-	6500 6400 6500 6100
 Connection ~ 6500 5200
 Connection ~ 6500 5500
-Connection ~ 6500 5800
-Connection ~ 6500 6100
 Wire Wire Line
 	5300 2300 5300 3300
 Wire Wire Line
@@ -76,14 +57,6 @@ Wire Wire Line
 Wire Wire Line
 	6000 4000 5800 4000
 Wire Wire Line
-	5800 4300 5800 4600
-Wire Wire Line
-	5800 4600 6000 4600
-Wire Wire Line
-	5800 4600 5800 4900
-Wire Wire Line
-	5800 4900 6000 4900
-Wire Wire Line
 	5300 3300 5300 3700
 Wire Wire Line
 	5300 3700 5800 3700
@@ -98,14 +71,6 @@ Wire Wire Line
 Wire Wire Line
 	6000 5500 5800 5500
 Wire Wire Line
-	5800 5800 5800 6100
-Wire Wire Line
-	5800 6100 6000 6100
-Wire Wire Line
-	5800 6100 5800 6400
-Wire Wire Line
-	5800 6400 6000 6400
-Wire Wire Line
 	5300 3700 5300 5200
 Wire Wire Line
 	5300 5200 5800 5200
@@ -117,15 +82,11 @@ Connection ~ 5800 4000
 Connection ~ 5800 3700
 Text Label 5600 3700 0    70   ~ 0
 VCC
-Connection ~ 5800 4300
-Connection ~ 5800 4600
 Connection ~ 5300 3300
 Connection ~ 5800 5500
 Connection ~ 5800 5200
 Text Label 5600 5200 0    70   ~ 0
 VCC
-Connection ~ 5800 5800
-Connection ~ 5800 6100
 Connection ~ 5300 3700
 Wire Wire Line
 	7100 3700 7400 3700
@@ -278,50 +239,6 @@ F 3 "" H 6100 3100 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L led_array-eagle-import:LED_ESML0603 RED4
-U 1 0 D89E56F58B3F5766
-P 6100 4600
-F 0 "RED4" V 6240 4420 59  0000 L BNN
-F 1 "LED_ESML0603" V 6325 4420 59  0000 L BNN
-F 2 "led_array:LED_SML0603" H 6100 4600 50  0001 C CNN
-F 3 "" H 6100 4600 50  0001 C CNN
-	1    6100 4600
-	0    -1   -1   0   
-$EndComp
-$Comp
-L led_array-eagle-import:LED_ESML0603 RED5
-U 1 0 A2CB783A6C014735
-P 6100 4900
-F 0 "RED5" V 6240 4720 59  0000 L BNN
-F 1 "LED_ESML0603" V 6325 4720 59  0000 L BNN
-F 2 "led_array:LED_SML0603" H 6100 4900 50  0001 C CNN
-F 3 "" H 6100 4900 50  0001 C CNN
-	1    6100 4900
-	0    -1   -1   0   
-$EndComp
-$Comp
-L led_array-eagle-import:LED_ESML0603 GREEN4
-U 1 0 2489187562A26154
-P 6100 6100
-F 0 "GREEN4" V 6240 5920 59  0000 L BNN
-F 1 "LED_ESML0603" V 6325 5920 59  0000 L BNN
-F 2 "led_array:LED_SML0603" H 6100 6100 50  0001 C CNN
-F 3 "" H 6100 6100 50  0001 C CNN
-	1    6100 6100
-	0    -1   -1   0   
-$EndComp
-$Comp
-L led_array-eagle-import:LED_ESML0603 GREEN5
-U 1 0 604F3655E0B1754C
-P 6100 6400
-F 0 "GREEN5" V 6240 6220 59  0000 L BNN
-F 1 "LED_ESML0603" V 6325 6220 59  0000 L BNN
-F 2 "led_array:LED_SML0603" H 6100 6400 50  0001 C CNN
-F 3 "" H 6100 6400 50  0001 C CNN
-	1    6100 6400
-	0    -1   -1   0   
-$EndComp
-$Comp
 L led_array-eagle-import:JST_CONN_HEADER_PH_TOP_2POS_2MMJST_CONN_HEADER_PH_TOP_2POS_2MM U$3
 U 1 0 93CD699454307519
 P 4300 3300
@@ -331,5 +248,49 @@ F 2 "led_array:JST_CONN_HEADER_PH_TOP_2POS_2MM" H 4300 3300 50  0001 C CNN
 F 3 "" H 4300 3300 50  0001 C CNN
 	1    4300 3300
 	0    -1   -1   0   
+$EndComp
+$Comp
+L Mechanical:MountingHole MH1
+U 1 1 5B7F23FA
+P 3400 2300
+F 0 "MH1" H 3500 2346 50  0000 L CNN
+F 1 "MountingHole" H 3500 2255 50  0000 L CNN
+F 2 "led_array:MountingHole_0-80" H 3400 2300 50  0001 C CNN
+F 3 "~" H 3400 2300 50  0001 C CNN
+	1    3400 2300
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole MH2
+U 1 1 5B7F24C1
+P 3400 2500
+F 0 "MH2" H 3500 2546 50  0000 L CNN
+F 1 "MountingHole" H 3500 2455 50  0000 L CNN
+F 2 "led_array:MountingHole_0-80" H 3400 2500 50  0001 C CNN
+F 3 "~" H 3400 2500 50  0001 C CNN
+	1    3400 2500
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole MH3
+U 1 1 5B7F24F7
+P 3400 2700
+F 0 "MH3" H 3500 2746 50  0000 L CNN
+F 1 "MountingHole" H 3500 2655 50  0000 L CNN
+F 2 "led_array:MountingHole_0-80" H 3400 2700 50  0001 C CNN
+F 3 "~" H 3400 2700 50  0001 C CNN
+	1    3400 2700
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole MH4
+U 1 1 5B7F2529
+P 3400 2900
+F 0 "MH4" H 3500 2946 50  0000 L CNN
+F 1 "MountingHole" H 3500 2855 50  0000 L CNN
+F 2 "led_array:MountingHole_0-80" H 3400 2900 50  0001 C CNN
+F 3 "~" H 3400 2900 50  0001 C CNN
+	1    3400 2900
+	1    0    0    -1  
 $EndComp
 $EndSCHEMATC
