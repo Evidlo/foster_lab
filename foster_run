@@ -4,20 +4,22 @@
 
 # make globs expand to nothing when there are no matches
 shopt -s nullglob
+shopt -s extglob
 # quit if we get any errors
 set -e
 
 # ----- Config -----
 
 # directory containing exported .mda's
-MDA_OUTPUT_DIR=output.exported
+MDA_OUTPUT_DIR=output.mda
 # directory containing filtered .mda's
 FILTERED_OUTPUT_DIR=output.filtered
 # directory containing whitened .mda's
 WHITENED_OUTPUT_DIR=output.whitened
 # directory containing firings .mda's
 FIRINGS_OUTPUT_DIR=output.firings
-
+# full path to mountainsort3 pipeline to use in sorting step
+PIPELINE=~/mountainsort3.mlp
 
 function build(){
     # ----- Checks -----
@@ -41,9 +43,14 @@ function build(){
 
     if [ ! -d $MDA_OUTPUT_DIR ]
     then
+	if [ -z $2 ]
+        then
+            warning "Error: You must specify .rec file"
+            exit 1
+        fi
         # export .rec to .mda in OUTPUT_DIR
         exportmda -rec $2 \
-                -outputdirectory $MDA_OUTPUT_DIR \
+		-output ${MDA_OUTPUT_DIR%.*} \
                 -abortbaddata 0
     else
         warning "Warning: $MDA_OUTPUT_DIR already exists"
@@ -54,7 +61,7 @@ function build(){
     if [ ! -d $FILTERED_OUTPUT_DIR ]
     then
         mkdir $FILTERED_OUTPUT_DIR
-        for f in $MDA_OUTPUT_DIR/*.mda
+        for f in $MDA_OUTPUT_DIR/!(*timestamps).mda
         do
             ml-run-process ephys.bandpass_filter \
                         --inputs timeseries:$f \
@@ -85,12 +92,23 @@ function build(){
     if [ ! -d $FIRINGS_OUTPUT_DIR ]
     then
         mkdir $FIRINGS_OUTPUT_DIR
+        if [ ! -f params.json ]
+        then
+            echo '{"samplerate":30000, "detect_sign":-1}' > params.json
+        fi
         for f in $WHITENED_OUTPUT_DIR/*.mda
         do
             ml-run-process ms4alg.sort \
                         --inputs timeseries:$f \
                         --outputs firings_out:$FIRINGS_OUTPUT_DIR/$(basename $f) \
                         --parameters detect_sign:1 adjacency_radius:-1 detect_threshold:3
+            # mlp-run $PIPELINE sort \
+            #     --raw=$f \
+            #     --_params=params.json \
+            #     --firings_out=output.firings/$f \
+            #     --cluster_metrics_out=output.firings/cluster_metrics.json \
+            #     --pre_out=output.firings/pre_$f \
+            #     --curate=true
         done
     else
         warning "Warning: $FIRINGS_OUTPUT_DIR already exists"
