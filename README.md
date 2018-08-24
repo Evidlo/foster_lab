@@ -2,10 +2,10 @@
 Script for running mountainsort and mountainview on a single epoch.  Run inside epoch directory containing .rec file
 
 #### Installation
-Copy to `~/bin` and add to your PATH
+Symlink to `~/bin` and add to your PATH
 ``` sh
 mkdir ~/bin
-cp foster_run ~/bin
+ln -s $(realpath foster_run) ~/bin
 echo "export PATH=$PATH:$HOME/bin"
 ```
 
