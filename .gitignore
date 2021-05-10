@@ -1,0 +1,11 @@
+.DS_Store
+.idea
+*.log
+tmp/
+**/fp-info-cache
+**/fp-lib-table
+**/sym-lib-table
+**/*-cache.lib
+**/*-bak
+
+
